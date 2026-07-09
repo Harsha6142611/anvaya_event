@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Anvaya Finance Tracker
 
-## Getting Started
+Minimal premium tracker for the **Anvaya** event: sponsors, expenditures, and a live balance (`sponsors − expenditures`). Add and delete require a PIN; each entry stores who added it.
 
-First, run the development server:
+## Stack
+
+- **Next.js** (App Router) + TypeScript + Tailwind
+- **Turso** (libSQL / SQLite) — free tier, zero ops
+- **Vercel** — fastest deploy for this stack
+
+## Local development
 
 ```bash
+cp .env.example .env.local
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Without Turso credentials, the app uses a local SQLite file (`file:local.db`). Default PIN is `1234` (override with `ANVAYA_PIN`).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Environment variables
 
-## Learn More
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `TURSO_DATABASE_URL` | Prod: yes | Turso DB URL, or `file:local.db` locally |
+| `TURSO_AUTH_TOKEN` | Prod: yes | Turso auth token (omit for local file DB) |
+| `ANVAYA_PIN` | Recommended | PIN for add/delete (defaults to `1234` if unset) |
 
-To learn more about Next.js, take a look at the following resources:
+## Turso setup (production)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Install CLI: `curl -sSfL https://get.tur.so/install.sh | bash`
+2. Sign in: `turso auth login`
+3. Create DB: `turso db create anvaya`
+4. Get URL: `turso db show anvaya --url`
+5. Create token: `turso db tokens create anvaya`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Paste URL and token into Vercel env (or `.env.local`).
 
-## Deploy on Vercel
+## Deploy on Vercel (recommended)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Fastest path for Next.js:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Push this repo to GitHub
+2. [Import the project on Vercel](https://vercel.com/new)
+3. Add env vars: `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `ANVAYA_PIN`
+4. Deploy
+
+Or from the CLI:
+
+```bash
+npx vercel
+```
+
+Then set production env vars in the Vercel dashboard and redeploy.
+
+## Usage
+
+- **Balance** at the top updates automatically
+- **Sponsors** / **Expenditures** columns list reason, amount, and who added
+- **Add entry** (right): name, reason, amount (digits only), type, PIN
+- **Delete**: hover a row → Delete → enter PIN → Confirm
+
+## API
+
+- `GET /api/entries` — list entries
+- `POST /api/entries` — `{ name, reason, amount, type, pin }`
+- `DELETE /api/entries/[id]` — `{ pin }`
+# anvaya_event
