@@ -1,26 +1,106 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --black: #050505;
+  --ink: #f4ead0;
+  --muted: #9a8f78;
+  --line: rgba(212, 175, 55, 0.22);
+  --surface: rgba(18, 16, 12, 0.85);
+  --gold: #d4af37;
+  --gold-bright: #f9e498;
+  --gold-deep: #7a5c2d;
+  --positive: #d4af37;
+  --negative: #c47a6a;
+  --background: #050505;
+  --foreground: #f4ead0;
+  --gold-gradient: linear-gradient(
+    135deg,
+    #7a5c2d 0%,
+    #d4af37 40%,
+    #f9e498 55%,
+    #c5a021 75%,
+    #7a5c2d 100%
+  );
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--black);
+  background-image:
+    radial-gradient(ellipse 70% 45% at 15% -5%, rgba(212, 175, 55, 0.14), transparent),
+    radial-gradient(ellipse 50% 35% at 95% 5%, rgba(122, 92, 45, 0.18), transparent),
+    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(212, 175, 55, 0.06), transparent),
+    linear-gradient(180deg, #0a0a0a 0%, #050505 50%, #0c0a07 100%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--font-body), system-ui, sans-serif;
+  min-height: 100%;
+}
+
+body::before {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  z-index: 50;
+}
+
+::selection {
+  background: rgba(212, 175, 55, 0.35);
+  color: #fff8e7;
+}
+
+.text-gold {
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.btn-gold {
+  background: var(--gold-gradient);
+  background-size: 200% 200%;
+  color: #0a0a0a;
+  transition: background-position 0.4s ease, box-shadow 0.3s ease, filter 0.3s ease;
+  box-shadow: 0 0 0 1px rgba(249, 228, 152, 0.25), 0 4px 20px rgba(212, 175, 55, 0.15);
+}
+
+.btn-gold:hover:not(:disabled) {
+  background-position: 100% 50%;
+  box-shadow: 0 0 0 1px rgba(249, 228, 152, 0.45), 0 6px 28px rgba(212, 175, 55, 0.28);
+  filter: brightness(1.05);
+}
+
+.field-gold {
+  width: 100%;
+  border-radius: 0.375rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 0.625rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.field-gold::placeholder {
+  color: var(--muted);
+}
+
+.field-gold:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.35);
+}
+
+.field-gold option {
+  background: #12100c;
+  color: var(--ink);
 }
